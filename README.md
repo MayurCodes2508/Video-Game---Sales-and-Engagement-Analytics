@@ -1,4 +1,5 @@
-# 🎮 Game Engagement Analytics Warehouse (Right now only Game Engagement Analytics Warehouse is done, will soon do Game Sales Analytics Warehouse and marts made by merging both Engagement and Sales Warehouses) 
+# 🎮 Game Engagement Analytics Warehouse 
+(Right now only Game Engagement Analytics Warehouse is done, will soon do Game Sales Analytics Warehouse and marts made by merging both Engagement and Sales Warehouses)
 **Analytics Engineering Project (dbt + SQL + Power BI)**
 
 ---
