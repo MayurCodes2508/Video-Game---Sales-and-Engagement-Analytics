@@ -1,0 +1,235 @@
+Staging:
+  Tables:
+   - name: stg_engagement_focused
+     grain: 1 row represents 1 unique game identified by game_id
+
+     columns: 
+      - name: game_id (grain)
+        type: int
+
+      - name: title
+        type: text
+
+      - name: release_date
+        type: date
+
+      - name: team
+        type: text, (multi-valued)
+
+      - name: rating
+        type: float
+
+      - name: times_listed
+        type: float
+
+      - name: number_of_reviews
+        type: float
+
+      - name: genres
+        type: text, (multi-valued)
+
+      - name: summary
+        type: text
+
+      - name: reviews
+        type: text
+
+      - name: plays
+        type: float
+
+      - name: playing
+        type: float
+
+      - name: backlogs
+        type: float
+
+      - name: wishlist
+        type: float
+
+
+Metrics:
+  columns:
+      - name: rating
+        type: float
+
+      - name: times_listed
+        type: float
+
+      - name: number_of_reviews
+        type: float
+
+      - name: plays
+        type: float
+
+      - name: playing
+        type: float
+
+      - name: backlogs
+        type: float
+
+      - name: wishlist
+        type: float
+
+
+Dimension Attributes:
+  columns: 
+    - name: game_id (grain)
+      type: int
+
+    - name: title
+      type: text
+
+    - name: release_date
+      type: date
+
+    - name: team
+      type: text, (multi-valued)
+
+    - name: genres
+      type: text, (multi-valued)
+
+    - name: summary
+      type: text
+
+    - name: reviews
+      type: text
+
+
+Intermediate:
+  Tables:
+    - name: int_genre_exploded
+      grain: 1 row represents 1 game x 1 genre
+      columns:
+        - name: game_id (grain)
+          type: int
+
+        - name: exploded_genre
+          description: >
+            (dim_genre.genre_name -> FK -> int_genre_exploded.exploded_genre)
+          type: text
+
+    - name: int_team_exploded
+      grain: 1 row represents 1 game x 1 team
+      columns:
+        - name: game_id (grain)
+          type: int
+
+        - name: exploded_team
+          description:
+            (dim_team.team_name -> FK -> int_team_exploded.exploded_team)
+          type: text
+
+
+Dimensions:
+  Tables:
+    - name: dim_title
+      grain: 1 row represents 1 game
+      columns:
+        - name: game_id (grain)
+          description: >
+            (fact_engagement.game_id -> FK -> dim_title.game_id)
+          type: int
+
+        - name: title
+          type: text
+
+        - name: release_date
+          type: date
+
+        - name: summary
+          type: text
+
+        - name: reviews
+          type: text 
+
+    - name: dim_date
+      grain: 1 row represents 1 date
+      columns:
+        - name: date
+          description: >
+            (Name Casted from release_date)
+          type: date
+
+        - name: year
+          type: int
+
+        - name: month
+          type: int
+        
+        - name: day
+          type: int
+
+    - name: dim_genre
+      grain: 1 row represents 1 genre
+      columns:
+        - name: genre_name 
+          description: >
+            (Name Casted from exploded_genre)
+          type: text
+
+    - name: dim_team
+      grain: 1 row represents 1 team
+      columns:
+        - name: team_name
+          description: >
+            (Name Casted from exploded_team) 
+          type: text
+
+
+Bridges:
+  Tables:
+    - name: bridge_game_genre
+      grain: 1 row represents 1 game x 1 genre
+      columns:
+        - name: game_id (grain)
+          description:
+            (fact_engagement.game_id -> FK -> bridge_game_genre.game_id)
+          type: int
+
+        - name: genre_name
+          description: >
+            (bridge_game_genre.genre_name -> FK -> dim_genre.genre_name)
+          type: text
+
+    - name: bridge_game_team
+      grain: 1 row represents 1 game x 1 team
+      columns:
+        - name: game_id (grain)
+          description: >
+            (fact_engagement.game_id -> FK -> bridge_game_team.game_id)
+          type: int
+
+        - name: team_name
+          description: >
+            (bridge_game_team.team_name -> FK -> dim_team.team_name)
+          type: text
+
+
+Facts:
+  Tables:
+    - name: fact_engagement
+      grain: 1 row represents 1 game 
+      columns:
+        - name: game_id (grain)
+          type: int
+
+        - name: rating
+          type: float
+
+        - name: times_listed
+          type: float
+
+        - name: number_of_reviews
+          type: float
+
+        - name: plays
+          type: float
+
+        - name: playing
+          type: float
+
+        - name: backlogs
+          type: float
+
+        - name: wishlist
+          type: float

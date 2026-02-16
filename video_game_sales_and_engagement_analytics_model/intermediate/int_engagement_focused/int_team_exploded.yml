@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: int_team_exploded
+    description: >
+      Exploded team dataset,
+      Grain: 1 row per game x team
+
+    columns:
+      - name: game_id
+        description: FK referencing dim_title
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_title')
+                field: game_id
+
+      - name: exploded_team
+        description: Individual team after exploding
+        tests:
+          - not_null

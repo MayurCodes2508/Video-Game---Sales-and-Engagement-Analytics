@@ -1,0 +1,67 @@
+version: 2
+
+models:
+  - name: stg_engagement_focused
+    description: >
+      Cleaned engagement dataset,
+      Grain: 1 row per 1 unique game identified by game_id
+
+    columns: 
+      - name: game_id
+        description: >
+          Unique identifier for each game
+        tests:
+          - not_null
+          - unique
+
+      - name: title
+        description: >
+          Game title
+
+      - name: release_date
+        description: >
+          Release date of game
+
+      - name: team
+        description: >
+          Multi-valued team of game
+
+      - name: rating
+        description: >
+          Average user rating of game
+
+      - name: times_listed
+        description: >
+          No of times game was listed by the users
+
+      - name: number_of_reviews
+        description: >
+          No of user reviews of game
+
+      - name: genres
+        description: >
+          Multi-valued genre of game
+
+      - name: summary
+        description: >
+          Summary of game
+
+      - name: reviews
+        description: >
+          Review of game
+
+      - name: plays
+        description: >
+          No of user plays of game
+
+      - name: playing
+        description: >
+          No of users playing the game
+
+      - name: backlogs
+        description: >
+          No of user who backlogged the game
+
+      - name: wishlist
+        description: >
+          No of user wishlists of game

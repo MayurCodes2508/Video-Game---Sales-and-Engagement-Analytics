@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: dim_title
+    description: >
+      Game dimension,
+      Contains descriptive attributes,
+      Grain: 1 row represents 1 unique game identified by game_id
+
+    columns:
+      - name: game_id
+        description: >
+          PK uniquely identifying a game
+        tests:
+          - not_null
+          - unique
+
+      - name: title
+        description: >
+          Name of the game
+        tests:
+          - not_null
+
+      - name: release_date
+        description: >
+          Release date of the game,
+          FK referencing date.dim_date
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date
+
+      - name: summary
+        description: >
+          Summary of the game
+
+      - name: reviews
+        description: >
+          Review of the game

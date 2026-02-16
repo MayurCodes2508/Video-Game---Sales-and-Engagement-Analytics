@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: int_genre_exploded
+    description: >
+      Exploded genre dataset,
+      Grain: 1 row per game x genre
+
+    columns:
+      - name: game_id
+        description: FK referencing dim_title
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_title')
+                field: game_id
+
+      - name: exploded_genre
+        description: Individual genre after exploding
+        tests:
+          - not_null

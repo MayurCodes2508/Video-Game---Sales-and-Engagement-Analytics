@@ -1,0 +1,20 @@
+name: video_game_sales_and_engagement_analytics
+version: '1.0'
+config-version: 2
+
+profile: video_game_sales_and_engagement_analytics
+
+model-paths:
+  - video_game_sales_and_engagement_analytics_model
+
+macro-paths:
+  - video_game_sales_and_engagement_analytics_macros
+
+test-paths:
+  - video_game_sales_and_engagement_analytics_tests
+
+seed-paths: 
+  - video_game_sales_and_engagement_analytics_seed
+
+seeds:
+    +schema: raw_video_game

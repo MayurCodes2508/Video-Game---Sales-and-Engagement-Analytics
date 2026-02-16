@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: dim_genre
+    description: >
+      Genre dimension,
+      Grain: 1 row represents 1 unique genre
+
+    columns:
+      - name: genre_name 
+        description: >
+          (Name Casted from exploded_genre)
+        tests:
+          - not_null
+          - unique

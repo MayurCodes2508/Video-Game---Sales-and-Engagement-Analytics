@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: >
+      Date dataset used for extracting different times (ex: year, month etc),
+      Grain: 1 row represents 1 date
+
+    columns:
+      - name: date
+        description: >
+          Name casted from release_date,
+        tests:
+          - not_null
+          - unique
+
+      - name: year
+        description: Year extracted from release_date
+        tests:
+          - not_null
+
+      - name: month
+        description: Month extracted from release_date
+        tests:
+          - not_null
+        
+      - name: day
+        description: Day extracted from release_date
+        tests:
+          - not_null

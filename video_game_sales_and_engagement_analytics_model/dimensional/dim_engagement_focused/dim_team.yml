@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: dim_team
+    description: >
+      Team dimension,
+      Grain: 1 row represents 1 unique team
+
+    columns:
+      - name: team_name 
+        description: >
+          (Name Casted from exploded_team)
+        tests:
+          - not_null
+          - unique

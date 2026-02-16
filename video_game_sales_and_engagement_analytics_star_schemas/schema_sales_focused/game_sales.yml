@@ -1,0 +1,127 @@
+Staging:
+  Tables:
+    - name: stg_sales_focused_grain
+      grain: 1 row represents 1 game x 1 platform x 1 year
+
+      columns:
+        - name: name (grain)
+          type: text
+
+        - name: platform (grain)
+          type: text
+
+        - name: year (grain)
+          type: int
+
+        - name: genre
+          type: text
+
+        - name: publisher
+          type: text
+
+        - name: na_sales
+          type: float
+
+        - name: eu_sales
+          type: float
+
+        - name: jp_sales
+          type: float
+
+        - name: other_sales
+          type: float
+
+
+Metrics:
+  columns:
+    - name: na_sales
+      type: float
+
+    - name: eu_sales
+      type: float
+
+    - name: jp_sales
+      type: float
+
+    - name: other_sales
+      type: float
+
+    - name: global_sales
+      type: float
+
+
+Dimension Attributes:
+  columns:
+    - name: name (grain)
+      type: text
+
+    - name: platform (grain)
+      type: text
+
+    - name: year (grain)
+      type: int
+
+    - name: genre
+      type: text
+
+    - name: publisher
+      type: text
+
+
+Intermediate:
+  Tables:
+
+
+Dimensions:
+  Tables:
+    - name: dim_release
+      grain: 1 row represents 1 game x 1 platform x 1 year
+      columns:
+        - name: release_id (grain)
+          type: text
+
+        - name: game_id
+          type: int   # FK → dim_title
+
+        - name: name
+          type: text
+
+        - name: platform
+          type: text
+
+        - name: year
+          type: int
+
+        - name: genre
+          type: text
+
+        - name: publisher
+          type: text
+
+
+Bridges:
+  Tables:
+
+
+Facts:
+  Tables:
+    - name: fact_sales
+      grain: 1 row represents 1 release
+      columns:
+        - name: release_id (grain)
+          type: text
+
+        - name: na_sales
+          type: float
+
+        - name: eu_sales
+          type: float
+
+        - name: jp_sales
+          type: float
+
+        - name: other_sales
+          type: float
+
+        - name: global_sales
+          type: float
