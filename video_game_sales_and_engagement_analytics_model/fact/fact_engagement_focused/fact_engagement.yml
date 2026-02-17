@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: fact_engagement
+    description: >
+      Contains metrics,
+      Grain: 1 row represents 1 unique game identified by game_id
+    columns:
+      - name: game_id
+        description: >
+          FK connected to dim_title.game_id
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              arguments:
+                to: ref('dim_title')
+                field: game_id
+
+      - name: rating
+        description: >
+          User rating of game
+
+      - name: times_listed
+        description: >
+          No of times game was listed
+
+      - name: number_of_reviews
+        description: >
+          No of reviews of game
+
+      - name: plays
+        description: >
+          No of plays of game
+
+      - name: playing
+        description: >
+          No of users playing the game
+
+      - name: backlogs
+        description: >
+          No of users rerun the game
+
+      - name: wishlist
+        description: >
+          No of users wishlisted the game
