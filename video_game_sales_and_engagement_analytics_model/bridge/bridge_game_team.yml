@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: bridge_game_team
+    description: >
+      Bridge that connects dim_team to fact_engagement,
+      Grain: 1 row represents 1 game_id x 1 team
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - game_id
+              - team_name
+    columns:
+      - name: game_id
+        description: >
+          PK that connected with fact_engagement
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fact_engagement')
+                field: game_id
+
+      - name: team_name
+        description: >
+          FK that connected with dim_genre
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_team')
+                field: team_name

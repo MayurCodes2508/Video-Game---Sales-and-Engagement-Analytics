@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: bridge_game_genre
+    description: >
+      Bridge that connects dim_genre to fact_engagement,
+      Grain: 1 row represents 1 game_id x 1 genre
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - game_id
+              - genre_name
+    columns:
+      - name: game_id
+        description: >
+          PK that connected with fact_engagement
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fact_engagement')
+                field: game_id
+
+      - name: genre_name
+        description: >
+          FK that connected with dim_genre
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_genre')
+                field: genre_name
