@@ -1,5 +1,4 @@
 # 🎮 Game Engagement Analytics Warehouse 
-(Right now only Game Engagement Analytics Warehouse is done, will soon do Game Sales Analytics Warehouse and marts made by merging both Engagement and Sales Warehouses)
 
 **Analytics Engineering Project (dbt + SQL + Power BI)**
 
@@ -208,50 +207,67 @@ Testing is applied intentionally at each layer.
 
 All tests are executed using:
 
-```bash
 dbt test
 
-# 💰 Game Sales Analytics Warehouse (Newly Added)
+---
+
+## 📌 Project Overview
 
 After completing the Engagement warehouse, a second warehouse was built for video game sales data using the same architectural discipline and grain-first modeling approach.
 
 This warehouse is independent from Engagement but follows the same layered structure and dimensional modeling standards.
 
+The goal was not just to compute totals, but to design a clean, atomic, fully additive fact model using dimensional modeling best practices.
+
+This repository demonstrates:
+
+- Structured ELT using dbt  
+- Explicit grain definition at every layer  
+- Dimensional modeling (Star Schema)  
+- Proper atomic fact design  
+- Surrogate key strategy  
+- Additive metric handling  
+- Business-ready mart layer  
+
 ---
 
-## 🔹 Sales Raw Layer
+# 🏗 Architecture
 
-**Source:** `vgsales.csv`
+The sales warehouse follows a layered architecture:
+
+Raw → Staging → Core (Dimensions + Fact) → Marts
+
+Each layer has a clearly defined responsibility.
+
+---
+
+## 🔹 Raw Layer
+
+Contains the original sales dataset (`vgsales.csv`) with minimal handling.
 
 **Raw Grain:**  
 1 row = 1 game × 1 platform × 1 year  
 
-Raw columns include:
+Raw data characteristics:
 
-- name  
-- platform  
-- year  
-- genre  
-- publisher  
-- na_sales  
-- eu_sales  
-- jp_sales  
-- other_sales  
-
-This dataset represents **periodic snapshot sales data**, not transactional sales.
+- Regional sales split across multiple columns  
+- Periodic snapshot sales data (not transactional)  
+- Single-valued genre and publisher attributes  
 
 ---
 
-## 🔹 Sales Staging Layer
+## 🔹 Staging Layer
 
 **Model:** `stg_sales_focused_grain`  
 **Grain:** 1 row = 1 game × 1 platform × 1 year  
 
-**Responsibilities:**
+Purpose: Preserve raw grain while validating structural integrity.
+
+Key responsibilities:
 
 - Preserve raw grain exactly  
 - Clean numeric inconsistencies  
-- Validate structural integrity  
+- Validate uniqueness of (name, platform, year)  
 - Avoid premature aggregation  
 
 No surrogate keys are created in staging.  
@@ -259,66 +275,28 @@ Surrogate keys are introduced in dimensional models only.
 
 ---
 
-# 🏗 Sales Core Layer (Star Schema)
+## 🔹 Core Layer (Star Schema)
 
-The sales warehouse was intentionally designed with **one atomic fact table only** to avoid redundancy and grain confusion.
-
----
-
-## 🔹 Dimension: `dim_release`
-
-**Grain:**  
-1 row = 1 game × 1 platform × 1 year  
-
-**Surrogate Key:**  
-- `release_id`
-
-**Attributes:**
-
-- name  
-- platform  
-- year  
-- genre  
-- publisher  
-
-This dimension represents the business identity of a release.
+The sales warehouse was intentionally designed with one atomic fact table only to avoid redundancy and grain confusion.
 
 ---
 
-## 🔹 Dimension: `dim_region`
+### Fact Table
 
-**Grain:**  
-1 row = 1 region  
+`fact_sales_by_region`
 
-Regions modeled:
+**Grain:** 1 row = 1 release × 1 region  
 
-- NA  
-- EU  
-- JP  
-- Other  
-
-**Surrogate Key:**  
-- `region_id`
-
-Region is treated as a **measurement context**, not part of release identity.
-
----
-
-## 🔹 Atomic Fact: `fact_sales_by_region`
-
-**Grain:**  
-1 row = 1 release × 1 region  
-
-**Foreign Keys:**
-
-- `release_id` → dim_release  
-- `region_id` → dim_region  
-
-**Metric:**
+Metrics:
 
 - sales  
 
-Sales columns (`na_sales`, `eu_sales`, `jp_sales`, `other_sales`) were unpivoted into row format to create a fully additive fact table.
+Foreign Keys:
+
+- release_id → dim_release  
+- region_id → dim_region  
+
+Regional sales columns (`na_sales`, `eu_sales`, `jp_sales`, `other_sales`) were unpivoted into row format to create a fully additive fact table.
 
 This ensures:
 
@@ -328,7 +306,48 @@ This ensures:
 
 ---
 
-## 📊 Sales Mart Layer
+### Dimensions
+
+#### `dim_release`
+
+**Grain:** 1 row = 1 game × 1 platform × 1 year  
+
+Attributes:
+
+- name  
+- platform  
+- year  
+- genre  
+- publisher  
+
+Surrogate Key:
+
+- release_id  
+
+This dimension represents the business identity of a release.
+
+---
+
+#### `dim_region`
+
+**Grain:** 1 row = 1 region  
+
+Regions modeled:
+
+- NA  
+- EU  
+- JP  
+- Other  
+
+Surrogate Key:
+
+- region_id  
+
+Region is treated as a measurement context, not part of release identity.
+
+---
+
+## 🔹 Mart Layer
 
 Sales marts were built to answer business questions such as:
 
@@ -348,9 +367,9 @@ All marts respect grain alignment and avoid unsafe fact-to-fact joins.
 
 The architecture allows safe merging of both warehouses.
 
-**Key rule applied before joining:**
+Before joining:
 
-- Sales (release × region grain) must be collapsed when required  
+- Sales (release × region grain) must be collapsed  
 - Engagement (game grain) must remain atomic  
 
 Grain alignment is enforced before computing non-additive metrics such as averages.
@@ -359,24 +378,12 @@ This prevents:
 
 - Metric duplication  
 - Region-level inflation  
-- Incorrect aggregations  
+- Incorrect aggregations
 
 ---
 
 # 🧪 Data Testing Strategy
 
-Testing havent been done yet but, will do next
+Tests haven't been added yet but, will do soon
 
-# 🧠 Architectural Strengths of This Project
-
-This repository now demonstrates:
-
-- Two independent star schemas (Engagement + Sales)  
-- Explicit grain enforcement at every layer  
-- Many-to-many modeling using bridge tables  
-- Surrogate key strategy  
-- Atomic fact table discipline  
-- Additive vs non-addative metric handling  
-- Referential integrity testing using dbt  
-- Business-ready mart design
-
+# Game Sales Core and Marts Completed. Future work includes merging with Engagement Warehouse.
