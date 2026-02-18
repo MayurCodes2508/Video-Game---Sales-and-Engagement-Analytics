@@ -174,6 +174,25 @@ Composite uniqueness is enforced on bridge keys to prevent duplication and metri
 
 ---
 
+## 📊 Engagement Mart Layer
+
+Engagement marts were built to answer business questions such as:
+
+- What are the top-rated games by user reviews?
+- Which developers (Teams) have the highest average ratings?
+- What are the most common genres in the dataset?
+- Which games have the highest backlog compared to wishlist?
+- What is the game release trend across years?
+- What is the distribution of user ratings?
+- What are the top 10 most wishlisted games?
+- What’s the average number of plays per genre?
+- Which developer studios are the most productive and impactful?
+
+
+All marts respect grain alignment and avoid unsafe fact-to-fact joins.
+
+---
+
 # 🧪 Data Testing Strategy
 
 Testing is applied intentionally at each layer.
@@ -191,3 +210,173 @@ All tests are executed using:
 
 ```bash
 dbt test
+
+# 💰 Game Sales Analytics Warehouse (Newly Added)
+
+After completing the Engagement warehouse, a second warehouse was built for video game sales data using the same architectural discipline and grain-first modeling approach.
+
+This warehouse is independent from Engagement but follows the same layered structure and dimensional modeling standards.
+
+---
+
+## 🔹 Sales Raw Layer
+
+**Source:** `vgsales.csv`
+
+**Raw Grain:**  
+1 row = 1 game × 1 platform × 1 year  
+
+Raw columns include:
+
+- name  
+- platform  
+- year  
+- genre  
+- publisher  
+- na_sales  
+- eu_sales  
+- jp_sales  
+- other_sales  
+
+This dataset represents **periodic snapshot sales data**, not transactional sales.
+
+---
+
+## 🔹 Sales Staging Layer
+
+**Model:** `stg_sales_focused_grain`  
+**Grain:** 1 row = 1 game × 1 platform × 1 year  
+
+**Responsibilities:**
+
+- Preserve raw grain exactly  
+- Clean numeric inconsistencies  
+- Validate structural integrity  
+- Avoid premature aggregation  
+
+No surrogate keys are created in staging.  
+Surrogate keys are introduced in dimensional models only.
+
+---
+
+# 🏗 Sales Core Layer (Star Schema)
+
+The sales warehouse was intentionally designed with **one atomic fact table only** to avoid redundancy and grain confusion.
+
+---
+
+## 🔹 Dimension: `dim_release`
+
+**Grain:**  
+1 row = 1 game × 1 platform × 1 year  
+
+**Surrogate Key:**  
+- `release_id`
+
+**Attributes:**
+
+- name  
+- platform  
+- year  
+- genre  
+- publisher  
+
+This dimension represents the business identity of a release.
+
+---
+
+## 🔹 Dimension: `dim_region`
+
+**Grain:**  
+1 row = 1 region  
+
+Regions modeled:
+
+- NA  
+- EU  
+- JP  
+- Other  
+
+**Surrogate Key:**  
+- `region_id`
+
+Region is treated as a **measurement context**, not part of release identity.
+
+---
+
+## 🔹 Atomic Fact: `fact_sales_by_region`
+
+**Grain:**  
+1 row = 1 release × 1 region  
+
+**Foreign Keys:**
+
+- `release_id` → dim_release  
+- `region_id` → dim_region  
+
+**Metric:**
+
+- sales  
+
+Sales columns (`na_sales`, `eu_sales`, `jp_sales`, `other_sales`) were unpivoted into row format to create a fully additive fact table.
+
+This ensures:
+
+- Correct aggregation behavior  
+- No metric inflation  
+- Clean dimensional joins  
+
+---
+
+## 📊 Sales Mart Layer
+
+Sales marts were built to answer business questions such as:
+
+- Which region generates the most sales?  
+- What are the best-selling platforms?  
+- What are the top 5 best-selling games per platform?  
+- What is the yearly sales trend?  
+- What are regional genre preferences?  
+- What is the yearly sales change per region?  
+- What is the average sales per publisher?  
+
+All marts respect grain alignment and avoid unsafe fact-to-fact joins.
+
+---
+
+## 🔁 Future: Merging Engagement + Sales
+
+The architecture allows safe merging of both warehouses.
+
+**Key rule applied before joining:**
+
+- Sales (release × region grain) must be collapsed when required  
+- Engagement (game grain) must remain atomic  
+
+Grain alignment is enforced before computing non-additive metrics such as averages.
+
+This prevents:
+
+- Metric duplication  
+- Region-level inflation  
+- Incorrect aggregations  
+
+---
+
+# 🧪 Data Testing Strategy
+
+Testing havent been done yet but, will do next
+
+# 🧠 Architectural Strengths of This Project
+
+This repository now demonstrates:
+
+- Two independent star schemas (Engagement + Sales)  
+- Explicit grain enforcement at every layer  
+- Many-to-many modeling using bridge tables  
+- Surrogate key strategy  
+- Atomic fact table discipline  
+- Additive vs non-addative metric handling  
+- Referential integrity testing using dbt  
+- Business-ready mart design
+

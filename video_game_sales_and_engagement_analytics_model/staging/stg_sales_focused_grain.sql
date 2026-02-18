@@ -1,6 +1,10 @@
 {{ config(materialized = "view") }}
 
-SELECT name, platform, year, genre, publisher,
+SELECT name, 
+       platform, 
+       year, 
+       genre, 
+       publisher,
        SUM(na_sales) AS na_sales,
        SUM(eu_sales) AS eu_sales,
        SUM(jp_sales) AS jp_sales,
