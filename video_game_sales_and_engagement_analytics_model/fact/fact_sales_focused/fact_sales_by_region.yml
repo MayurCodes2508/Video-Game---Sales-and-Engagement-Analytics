@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: fact_sales_by_region
+    description: >
+      Contains sales metric at game release and region and unique identifiers:
+      release_id and region_id that are FK related to PK in dim_release and 
+      dim_region, Grain: 1 row represents 1 unique identifier release_id and 
+      region_id
+    
+    columns:
+      - name: release_id
+        description: >
+          FK relationship with dim_release.release_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_release')
+                field: release_id
+
+
+      - name: region_id
+        description: >
+          FK relationship with dim_region.region_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_region')
+                field: region_id
+
+      - name: sales
+        description: >
+          Sales at game release and region level

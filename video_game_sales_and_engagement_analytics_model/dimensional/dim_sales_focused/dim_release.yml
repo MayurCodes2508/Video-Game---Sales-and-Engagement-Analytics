@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: dim_release
+    description: >
+      Contains game release attributes: name x platform x year, and its unique
+      grain identifier release_id, other game attributes: publisher and genre,
+      Grain: 1 row represents 1 name x platform x year
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - name
+              - platform
+              - year
+    
+    columns:
+      - name: release_id
+        description: >
+          unique grain identifier
+        tests:
+          - not_null
+          - unique
+
+      - name: name
+        description: >
+          name of the game
+        tests:
+          - not_null
+
+      - name: platform
+        description: >
+          platform which the game released on
+        tests:
+          - not_null
+
+      - name: year
+        description: >
+          year the game released
+        tests:
+          - not_null
+
+      - name: genre
+        description: >
+          genre the game belong to
+
+      - name: publisher
+        description: >
+          publisher of the game
+    

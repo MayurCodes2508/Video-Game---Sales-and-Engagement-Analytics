@@ -204,6 +204,7 @@ Testing is applied intentionally at each layer.
 - Not-null enforcement
 - Foreign key relationship tests
 - Composite uniqueness tests in bridges
+- Unique combination of columns test
 
 All tests are executed using:
 
@@ -388,7 +389,18 @@ This prevents:
 
 # 🧪 Data Testing Strategy
 
-Tests haven't been added yet but, will do soon
+- Primary key uniqueness
+
+### Core
+- Unique primary keys in dimensions
+- Not-null enforcement
+- Foreign key relationship tests
+- Unique combination of columns test
+
+All tests are executed using:
+
+dbt test
+
 
 ---
 

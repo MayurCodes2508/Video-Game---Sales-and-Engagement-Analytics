@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: stg_sales_focused_grain
+    description: >
+      Game sales data containing release and region related attributes with sales
+      Grain: 1 row represents 1 release (name x platform x year)
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - name
+              - platform
+              - year
+    
+    columns:
+      - name: name
+        description: >
+          name of the game
+        tests:
+          - not_null
+
+      - name: platform
+        description: >
+          platform the game released on
+        tests:
+          - not_null
+
+      - name: year
+        description: >
+          year the game released
+        tests:
+          - not_null
+
+      - name: genre
+        description: >
+          genre of the game
+
+      - name: publisher
+        description: >
+          game publisher
+
+      - name: na_sales
+        description: >
+          sales in na region
+
+      - name: eu_sales
+        description: >
+          sales in eu region
+
+      - name: jp_sales
+        description: >
+          sales in jp region
+
+      - name: other_sales
+        description: >
+          sales in other region
