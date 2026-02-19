@@ -211,6 +211,10 @@ dbt test
 
 ---
 
+# 🎮 Game Sales Analytics Warehouse 
+
+---
+
 ## 📌 Project Overview
 
 After completing the Engagement warehouse, a second warehouse was built for video game sales data using the same architectural discipline and grain-first modeling approach.
